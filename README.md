@@ -7,8 +7,10 @@ Probrably has bugs.
 Features:
 
 Worlds
-AOT compatibility
-Entity livelyness checking
-Add/Remove components
-Contiguous Data
-No allocations/linq on hot paths
+- AOT compatibility
+- Entity livelyness checking
+- Add/Remove components
+- Contiguous Data
+- No allocations/linq on hot paths
+- O(1) Add/Remove/Has/Get operations
+- Query caching
