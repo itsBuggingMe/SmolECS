@@ -36,8 +36,8 @@ public static class ECS
     public static Span<T> Span<T>(this Archetype archetype) => ((ComponentStorage<T>)archetype.Data[typeof(T)]).Buffer.AsSpan(0, archetype.EntityCount.Value);
     internal static Archetype ArchetypeCreated(World world, Archetype archetype) => world.QueryCache.Where(c => c.Key.All(t => archetype.Key.Contains(t))).Select(t => t.Value.Add(archetype)).Count() == -1 ? null! : archetype;
     public static HashSet<Archetype> Query(this World world, System.Collections.Immutable.ImmutableHashSet<Type> types) => System.Runtime.InteropServices.CollectionsMarshal.GetValueRefOrAddDefault(world.QueryCache, types, out _) ??= world.Archetypes.Where(a => types.All(t => t == typeof(Entity) || a.Key.Contains(t))).Select(kvp => kvp.Value).ToHashSet();
-    public static ref T Get<T>(this Entity entity) => ref ((ComponentStorage<T>)entity.World.Table.Get(entity.ID).Archetype.Data[typeof(T)]).Buffer[entity.World.Table.Get(entity.ID).Index];
-    public static bool Has<T>(this Entity entity) => entity.World.Table.Get(entity.ID).Archetype.Data.ContainsKey(typeof(T));
+    public static ref T Get<T>(this Entity entity) => ref (entity.World.Table.Get(entity.ID) is { } loc && loc.Version == entity.Version ? ref ((ComponentStorage<T>)loc.Archetype.Data[typeof(T)]).Buffer[loc.Index] : ref System.Runtime.CompilerServices.Unsafe.NullRef<T>());
+    public static bool Has<T>(this Entity entity) => entity.World.Table.Get(entity.ID) is { } loc && loc.Version == entity.Version ? loc.Archetype.Data.ContainsKey(typeof(T)) : throw new InvalidOperationException("Entity is dead 💀");
 }
 public sealed class ComponentStorage<T> : ComponentStorageBase
 {
