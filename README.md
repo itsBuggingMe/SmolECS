@@ -5,8 +5,7 @@ Don't actually use this - this was written as a challenge.
 Probrably has bugs.
 
 Features:
-
-Worlds
+- Worlds
 - AOT compatibility
 - Entity livelyness checking
 - Add/Remove components
